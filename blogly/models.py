@@ -18,19 +18,19 @@ class User(db.Model):
     )
 
     first_name = db.mapped_column(
-        db.string(50),
+        db.String(50),
         nullable=False
     )
 
     last_name = db.mapped_column(
-        db.string(50),
+        db.String(50),
         nullable=False
     )
 
     image_url = db.mapped_column(
-        db.string(200),
+        db.String(200),
         unique=True
     )
 
     def get_full_name(self):
-        return self.first_name + self.last_name
+        return self.first_name + " " + self.last_name
