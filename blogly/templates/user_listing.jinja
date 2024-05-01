@@ -1,0 +1,21 @@
+{% extends 'base.jinja' %}
+
+<!-- user_listing.jinja - for testing purposes -->
+
+{% block title %}
+<h1>User Listing</h1>
+{% endblock %}
+
+{% block content %}
+
+<ul>
+{% for user in users %}
+<li></li>
+{% endfor %}
+</ul>
+
+<form action="">
+    <button>Add user</button>
+</form>
+
+{% endblock %}

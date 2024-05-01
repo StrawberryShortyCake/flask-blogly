@@ -1,0 +1,29 @@
+{% extends 'base.jinja' %}
+
+<!-- new_user.jinja - for testing purposes -->
+
+{% block title %}
+<h1>Create a user</h1>
+{% endblock %}
+
+{% block content %}
+
+<form method="POST" action="">
+    <label>First Name
+        <input name="first_name" type="text" placeholder="Enter a first name"
+        class="form-input">
+    </label>
+
+    <label>Last Name
+        <input name="first_name" type="text" placeholder="Enter a first name"
+        class="form-input">
+    </label>
+
+    <label>Image URL
+        <input name="first_name" type="text" placeholder="Enter a first name"
+        class="form-input">
+    </label>
+    <button class="create-user-btn">Add</button>
+</form>
+
+{% endblock %}

@@ -14,3 +14,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SQLALCHEMY_RECORD_QUERIES'] = True
 db.init_app(app)
+
+# TODO: need to listen for when a user page is going to be generated
+@app.get('/')
+def
