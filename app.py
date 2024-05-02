@@ -35,9 +35,6 @@ def show_all_users():
 
     q = db.select(User).order_by(User.last_name, User.first_name)
     sorted_users = dbx(q).scalars().all()
-    # sorted_users_full_name = sorted_users.map((user_instance)=>{
-
-    # })
 
     return render_template(
         "user_listing.jinja",
