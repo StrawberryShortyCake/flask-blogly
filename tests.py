@@ -43,12 +43,12 @@ class UserViewTestCase(TestCase):
         db.session.add(test_user)
         db.session.commit()
 
-        self.test_user_id = test_user.id
-
         # We can hold onto our test_user's id by attaching it to self (which is
         # accessible throughout this test class). This way, we'll be able to
         # rely on this user in our tests without needing to know the numeric
         # value of their id, since it will change each time our tests are run.
+
+        self.test_user_id = test_user.id
 
     def tearDown(self):
         """Clean up any fouled transaction."""
@@ -68,17 +68,22 @@ class UserViewTestCase(TestCase):
 
             # user = dbx() to get the user, which can give us the id
 
-            user_id = str(self.test_user_id)
+            user_id = self.test_user_id
 
-            response = c.post(f'/users/{user_id}/edit', data={
-                "first_name": 'changed1_first',
-                "last_name": 'changed1_last',
-                "img_url": 'www.google.com'
-            })
+            response = c.post(
+                f'/users/{user_id}/edit',
+                data={
+                    "first_name": 'changed1_first',
+                    "last_name": 'changed1_last',
+                    "img_url": 'www.google.com'
+                },
+                follow_redirects=True
+            )
 
             self.assertEqual(response.status_code, 302)
             response = c.get("/users")
             html = response.get_data(as_text=True)
+            # TODO: follow_redirect = true, allows us to do a 200 code, test all changes
             self.assertIn("changed1_first", html)
 
             # TODO: future test for broken image URL
@@ -86,7 +91,7 @@ class UserViewTestCase(TestCase):
     def test_delete_user(self):
         with app.test_client() as c:
 
-            user_id = str(self.test_user_id)
+            user_id = self.test_user_id
 
             response = c.post(f'/users/{user_id}/delete', data={
                 "user_id": 'user_id'
@@ -95,4 +100,6 @@ class UserViewTestCase(TestCase):
             self.assertEqual(response.status_code, 302)
             response = c.get("/users")
             html = response.get_data(as_text=True)
+            breakpoint()
+            # because we can't guarantee that the teardown doesn't have before this, we'd want 2 users; each test is torn down and set up before run
             self.assertNotIn("changed1_first", html)

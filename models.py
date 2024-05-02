@@ -7,7 +7,7 @@ dbx = db.session.execute
 
 
 class User(db.Model):
-    """creating a User class"""
+    """site user"""
 
     __tablename__ = "users"
 
@@ -28,9 +28,9 @@ class User(db.Model):
     )
 
     image_url = db.mapped_column(
-        db.String(10000),
-        unique=True
+        db.String(1000)
+        # TODO: add a default image, not nullable
     )
 
     def get_full_name(self):
-        return self.first_name + " " + self.last_name
+        return self.first_name + " " + self.last_name  # TODO: change it to an f string

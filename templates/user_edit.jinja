@@ -3,28 +3,52 @@
 <!-- user_edit.jinja - for testing purposes -->
 
 {% block title %}
-<h1>Edit User</h1>
+<h1>Edit User</h1> <!-- add user name -->
 {% endblock %}
 
 {% block content %}
 
 <form >
     <label>First Name
-        <input name="first_name" type="text" value="{{ user.first_name }}" required
-        class="form-input">
+        <input
+            name="first_name"
+            type="text" value="{{ user.first_name }}"
+            required
+            class="form-input"
+        >
     </label>
 
     <label>Last Name
-        <input name="last_name" type="text" value="{{ user.last_name }}" required
-        class="form-input">
+        <input
+            name="last_name"
+            type="text"
+            value="{{ user.last_name }}"
+            required
+            class="form-input"
+        >
     </label>
 
     <label>Image URL
-        <input name="img_url" type="text" value="{{ user.image_url }}"
-        class="form-input">
+        <input
+            name="img_url"
+            type="text"
+            value="{{ user.image_url }}"
+            class="form-input"
+        >
     </label>
-        <button type="submit" formmethod="POST" formaction="/users/{{ user.id }}/edit">Confirm</button>
-        <button type="submit" formmethod="GET" formaction="/users/{{ user.id }}">Cancel</button>
+        <button
+            type="submit"
+            formmethod="POST"
+            formaction="/users/{{ user.id }}/edit"
+        >
+            Confirm
+        </button>
+        <button
+            type="submit"
+            formmethod="GET"
+            formaction="/users/{{ user.id }}"
+        >Cancel
+        </button>
 </form>
 
 {% endblock %}

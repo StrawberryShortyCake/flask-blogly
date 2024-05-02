@@ -9,7 +9,7 @@ from werkzeug.exceptions import NotFound
 from models import db, dbx, User
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret'  # WHY DOES THIS WORK WITH FLASH???
+app.config['SECRET_KEY'] = 'secret'  # NOTES: this is a flash message dependent
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     "DATABASE_URL", 'postgresql:///blogly')
 app.config['SQLALCHEMY_ECHO'] = True
@@ -32,7 +32,7 @@ def show_homepage():
 
 @app.get('/users')
 def show_all_users():
-    """Show the user_listing page with all the users, ordered by last name,
+    """Show the page with all the users, ordered by last name,
         first name."""
 
     q = db.select(User).order_by(User.last_name, User.first_name)
@@ -48,50 +48,52 @@ def show_all_users():
 def add_new_user():
     """ Show the add new user form. """
 
-    return render_template(
-        "new_user.jinja"
-    )
+    return render_template("new_user.jinja")
 
 
 @app.post('/users/new')
 def handle_add_user():
-    """ Given first name, last name, and an optional image URL,
-        add a user to the database. """
+    """
+    Given first name, last name, and an optional image URL,
+    add a user to the database.
+    """
 
     first_name = request.form['first_name']
     last_name = request.form['last_name']
+    # user empty input will be "", now we have both null and ""
     img_url = request.form['img_url'] or None
+    # it will use default, given null, so we want default ""
 
-    user = User(first_name=first_name,
-                last_name=last_name,
-                image_url=img_url
-                )
+    user = User(
+        first_name=first_name,
+        last_name=last_name,
+        image_url=img_url
+    )
 
     db.session.add(user)
     db.session.commit()
 
     flash(f'User {first_name} was added!')
 
+    # navigate away to not have multiple form submissions
     return redirect('/users')
 
 
 @app.get('/users/<int:user_id>')
 def show_user_details(user_id):
-    """ Given a user id, show the page for the user details. """
+    """ Given a user id, show the page for the user details."""
 
-    q = db.select(User).where(User.id == user_id)
+    q = db.select(User).where(User.id == user_id)  # TODO: get or 404
     user = dbx(q).scalars().one()
 
-    return render_template(
-        "user_details.jinja",
-        user=user
-    )
+    return render_template("user_details.jinja", user=user)
 
 
 @app.get('/users/<int:user_id>/edit')
-def edit_user_details(user_id):
-    """ Given the user id, show the page for the user to edit details. """
+def show_user_edit(user_id):
+    """Given the user id, show the page for the user to edit details."""
 
+    # check for whether user instance exists on the id
     q = db.select(User).where(User.id == user_id)
     user = dbx(q).scalars().one()
 
@@ -102,11 +104,11 @@ def edit_user_details(user_id):
 
 
 @app.post('/users/<int:user_id>/edit')
-def confirm_user_edit(user_id):
-    """ Given a user id and changes to the user details, update the database.
-        """
+def handle_user_edit(user_id):
+    """Given a user id and changes to the user details, update the database."""
 
     q = db.select(User).where(User.id == user_id)
+    # check for whether user instance exists on the id
     user = dbx(q).scalars().one()
 
     user.first_name = request.form['first_name']
@@ -115,17 +117,18 @@ def confirm_user_edit(user_id):
 
     db.session.commit()
 
-    # TODO: ask why this wouldn't work without a secret key
     flash(f'User {user.first_name} was edited!')
 
     return redirect('/users')
 
 
 @app.post('/users/<int:user_id>/delete')
-def confirm_user_delete(user_id):
-    """ Given a user id, delete the user instance from the database.
-        """
+def handle_user_delete(user_id):
+    """
+    Given a user id, delete the user instance from the database.
+    """
 
+    # check for whether user instance exists on the id
     q = db.select(User).where(User.id == user_id)
     user = dbx(q).scalars().one()
 
