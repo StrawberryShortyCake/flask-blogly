@@ -15,11 +15,10 @@ app.config['SQLALCHEMY_ECHO'] = True
 app.config['SQLALCHEMY_RECORD_QUERIES'] = True
 db.init_app(app)
 
-# TODO: need to listen for when a user page is going to be generated
-
 
 @app.get('/')
 def show_homepage():
+    """Show the user_listing page with all the users."""
 
     q = db.select(User)
     users = dbx(q).scalars().all()
@@ -32,6 +31,8 @@ def show_homepage():
 
 @app.get('/users')
 def show_all_users():
+    """Show the user_listing page with all the users, ordered by last name,
+        first name."""
 
     q = db.select(User).order_by(User.last_name, User.first_name)
     sorted_users = dbx(q).scalars().all()
@@ -44,6 +45,7 @@ def show_all_users():
 
 @app.get('/users/new')
 def add_new_user():
+    """ Show the add new user form. """
 
     return render_template(
         "new_user.jinja"
@@ -52,6 +54,8 @@ def add_new_user():
 
 @app.post('/users/new')
 def handle_add_user():
+    """ Given first name, last name, and an optional image URL,
+        add a user to the database. """
 
     first_name = request.form['first_name']
     last_name = request.form['last_name']
@@ -70,6 +74,7 @@ def handle_add_user():
 
 @app.get('/users/<int:user_id>')
 def show_user_details(user_id):
+    """ Given a user id, show the page for the user details. """
 
     q = db.select(User).where(User.id == user_id)
     user = dbx(q).scalars().all()[0]
@@ -82,6 +87,7 @@ def show_user_details(user_id):
 
 @app.get('/users/<int:user_id>/edit')
 def edit_user_details(user_id):
+    """ Given the user id, show the page for the user to edit details. """
 
     q = db.select(User).where(User.id == user_id)
     user = dbx(q).scalars().all()[0]
@@ -94,12 +100,11 @@ def edit_user_details(user_id):
 
 @app.post('/users/<int:user_id>/edit')
 def confirm_user_edit(user_id):
+    """ Given a user id and changes to the user details, update the database.
+        """
 
     q = db.select(User).where(User.id == user_id)
     user = dbx(q).scalars().one()
-
-    # TODO: ADD VALIDATIONS
-    # TODO: TEST
 
     user.first_name = request.form['first_name']
     user.last_name = request.form['last_name']
@@ -112,6 +117,8 @@ def confirm_user_edit(user_id):
 
 @app.post('/users/<int:user_id>/delete')
 def confirm_user_delete(user_id):
+    """ Given a user id, delete the user instance from the database.
+        """
 
     q = db.select(User).where(User.id == user_id)
     user = dbx(q).scalars().one()

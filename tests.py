@@ -1,5 +1,5 @@
 from models import db, dbx, User
-#DEFAULT_IMAGE_URL
+# DEFAULT_IMAGE_URL
 from app import app
 from unittest import TestCase
 import os
@@ -55,6 +55,8 @@ class UserViewTestCase(TestCase):
         db.session.rollback()
 
     def test_list_users(self):
+        """ Test whether re return an html page with the test user info. """
+
         with app.test_client() as c:
             resp = c.get("/users")
             self.assertEqual(resp.status_code, 200)
@@ -62,17 +64,43 @@ class UserViewTestCase(TestCase):
             self.assertIn("test1_first", html)
             self.assertIn("test1_last", html)
 
-# TODO: ask how we can find user_id for the resource
     def test_edit_user(self):
+        """ Test whether we redirect the user to the Users page
+            after subitting changes, and whether the changes display """
+
         with app.test_client() as c:
-            user_changes = {
+            user_id = str(self.user_id)
+
+            response = c.post(f'/users/{user_id}/edit', data={                  # NOTES: not submitted through browser, formdata and not json
                 "first_name": 'changed1_first',
                 "last_name": 'changed1_last',
                 "img_url": 'www.google.com'
-            }
-            response = c.post("/users/1/edit", json=user_changes)
-            breakpoint()
+            })
+
             self.assertEqual(response.status_code, 302)
             response = c.get("/users")
             html = response.get_data(as_text=True)
             self.assertIn("changed1_first", html)
+
+            # TODO: future test for broken image URL
+
+    def test_delete_user(self):
+        """ Test whether we redirect the user to the Users page after
+            subitting changes, and whether the user is removed from page. """
+
+        with app.test_client() as c:
+
+            user_id = str(self.user_id)
+            user_first_name = db.session.execute(
+                db.select(User.first_name).where(
+                    User.id == user_id
+                ))
+
+            response = c.post(f'/users/{user_id}/delete', data={
+                "user_id": 'user_id'
+            })
+
+            self.assertEqual(response.status_code, 302)
+            response = c.get("/users")
+            html = response.get_data(as_text=True)
+            self.assertNotIn(f'{user_first_name}', html)

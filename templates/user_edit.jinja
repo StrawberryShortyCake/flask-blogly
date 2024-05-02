@@ -10,17 +10,17 @@
 
 <form >
     <label>First Name
-        <input name="first_name" type="text" placeholder="{{ user.first_name }}"
+        <input name="first_name" type="text" value="{{ user.first_name }}" required
         class="form-input">
     </label>
 
     <label>Last Name
-        <input name="last_name" type="text" placeholder="{{ user.last_name }}"
+        <input name="last_name" type="text" value="{{ user.last_name }}" required
         class="form-input">
     </label>
 
     <label>Image URL
-        <input name="img_url" type="text" placeholder="{{ user.image_url }}"
+        <input name="img_url" type="text" value="{{ user.image_url }}"
         class="form-input">
     </label>
         <button type="submit" formmethod="POST" formaction="/users/{{ user.id }}/edit">Confirm</button>
