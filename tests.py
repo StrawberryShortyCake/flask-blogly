@@ -1,4 +1,5 @@
-from models import db, dbx, DEFAULT_IMAGE_URL, User
+from models import db, dbx, User
+#DEFAULT_IMAGE_URL
 from app import app
 from unittest import TestCase
 import os
@@ -60,3 +61,18 @@ class UserViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
             self.assertIn("test1_first", html)
             self.assertIn("test1_last", html)
+
+# TODO: ask how we can find user_id for the resource
+    def test_edit_user(self):
+        with app.test_client() as c:
+            user_changes = {
+                "first_name": 'changed1_first',
+                "last_name": 'changed1_last',
+                "img_url": 'www.google.com'
+            }
+            response = c.post("/users/1/edit", json=user_changes)
+            breakpoint()
+            self.assertEqual(response.status_code, 302)
+            response = c.get("/users")
+            html = response.get_data(as_text=True)
+            self.assertIn("changed1_first", html)
