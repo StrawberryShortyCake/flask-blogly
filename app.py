@@ -83,8 +83,8 @@ def handle_add_user():
 def show_user_details(user_id):
     """ Given a user id, show the page for the user details."""
 
-    q = db.select(User).where(User.id == user_id)  # TODO: get or 404
-    user = dbx(q).scalars().one()
+    q = db.select(User).where(User.id == user_id)
+    user = db.one_or_404(q)
 
     return render_template("user_details.jinja", user=user)
 
@@ -93,9 +93,8 @@ def show_user_details(user_id):
 def show_user_edit(user_id):
     """Given the user id, show the page for the user to edit details."""
 
-    # check for whether user instance exists on the id
     q = db.select(User).where(User.id == user_id)
-    user = dbx(q).scalars().one()
+    user = db.one_or_404(q)
 
     return render_template(
         "user_edit.jinja",
@@ -108,12 +107,12 @@ def handle_user_edit(user_id):
     """Given a user id and changes to the user details, update the database."""
 
     q = db.select(User).where(User.id == user_id)
-    # check for whether user instance exists on the id
-    user = dbx(q).scalars().one()
+    user = db.one_or_404(q)
 
+# TODO: why isn't this giving us our default image when a user puts an empty url
     user.first_name = request.form['first_name']
     user.last_name = request.form['last_name']
-    user.image_url = request.form['img_url']
+    user.image_url = request.form['img_url'] or None
 
     db.session.commit()
 
@@ -128,9 +127,8 @@ def handle_user_delete(user_id):
     Given a user id, delete the user instance from the database.
     """
 
-    # check for whether user instance exists on the id
     q = db.select(User).where(User.id == user_id)
-    user = dbx(q).scalars().one()
+    user = db.one_or_404(q)
 
     db.session.delete(user)
     db.session.commit()

@@ -28,9 +28,10 @@ class User(db.Model):
     )
 
     image_url = db.mapped_column(
-        db.String(1000)
-        # TODO: add a default image, not nullable
+        db.String(1000),
+        nullable=False,
+        default="https://demofree.sirv.com/nope-not-here.jpg"
     )
 
     def get_full_name(self):
-        return self.first_name + " " + self.last_name  # TODO: change it to an f string
+        return f"{self.first_name} {self.last_name}"

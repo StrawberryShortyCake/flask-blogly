@@ -12,7 +12,8 @@
     <label>First Name
         <input
             name="first_name"
-            type="text" value="{{ user.first_name }}"
+            type="text"
+            value="{{ user.first_name }}"
             required
             class="form-input"
         >
@@ -41,13 +42,14 @@
             formmethod="POST"
             formaction="/users/{{ user.id }}/edit"
         >
-            Confirm
+        Confirm
         </button>
         <button
             type="submit"
             formmethod="GET"
             formaction="/users/{{ user.id }}"
-        >Cancel
+        >
+        Cancel
         </button>
 </form>
 
