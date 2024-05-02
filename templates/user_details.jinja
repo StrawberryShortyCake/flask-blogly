@@ -11,9 +11,11 @@
 <div class="details-container">
     <div><img src="{{ user.image_url }}"></div>
     <div>
-        <p>{{ user.get_full_name }}</p>
-        <button>Edit</button>
-        <button>Delete</button>
+        <p>{{ user.get_full_name() }}</p>
+        <form>
+            <button type="submit" formmethod="GET" formaction="/users/{{ user.id }}/edit">Edit</button>
+            <button type="submit" formmethod="POST" formaction="/users/{{ user.id }}/delete">Delete</button>
+        </form>
     </div>
 </div>
 

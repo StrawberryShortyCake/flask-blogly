@@ -71,10 +71,55 @@ def handle_add_user():
     return redirect('/users')
 
 
-@app.get('/user/<int:user-id>')
-def show_user_details(user-id):
+@app.get('/users/<int:user_id>')
+def show_user_details(user_id):
 
-    
-    # behind the scene: dict = {'/users': show_all_users}
-    # Server listens to request
-    # Flask dispatches the request
+    q = db.select(User).where(User.id == user_id)
+    user = dbx(q).scalars().all()[0]
+
+    return render_template(
+        "user_details.jinja",
+        user=user
+    )
+
+
+@app.get('/users/<int:user_id>/edit')
+def edit_user_details(user_id):
+
+    q = db.select(User).where(User.id == user_id)
+    user = dbx(q).scalars().all()[0]
+
+    return render_template(
+        "user_edit.jinja",
+        user=user
+    )
+
+
+@app.post('/users/<int:user_id>/edit')
+def confirm_user_edit(user_id):
+
+    q = db.select(User).where(User.id == user_id)
+    user = dbx(q).scalars().one()
+
+    # TODO: ADD VALIDATIONS
+    # TODO: TEST
+
+    user.first_name = request.form['first_name']
+    user.last_name = request.form['last_name']
+    user.image_url = request.form['img_url']
+
+    db.session.commit()
+
+    return redirect('/users')
+
+
+@app.post('/users/<int:user_id>/delete')
+def confirm_user_delete(user_id):
+
+    q = db.select(User).where(User.id == user_id)
+    user = dbx(q).scalars().one()
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return redirect('/users')
