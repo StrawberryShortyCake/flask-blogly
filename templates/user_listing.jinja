@@ -10,11 +10,11 @@
 
 <ul>
 {% for user in users %}
-<li></li>
+<li>{{ user.get_full_name() }}</li>
 {% endfor %}
 </ul>
 
-<form action="">
+<form action="/users/new">
     <button>Add user</button>
 </form>
 
