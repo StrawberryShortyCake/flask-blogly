@@ -80,7 +80,7 @@ def show_user_details(user_id):
     """ Given a user id, show the page for the user details. """
 
     q = db.select(User).where(User.id == user_id)
-    user = dbx(q).scalars().all()[0]
+    user = dbx(q).scalars().one()
 
     return render_template(
         "user_details.jinja",

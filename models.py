@@ -28,7 +28,7 @@ class User(db.Model):
     )
 
     image_url = db.mapped_column(
-        db.String(200),
+        db.String(10000),
         unique=True
     )
 
