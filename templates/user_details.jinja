@@ -1,0 +1,20 @@
+{% extends 'base.jinja' %}
+
+<!-- user_details.jinja - for testing purposes -->
+
+{% block title %}
+<h1>User Details</h1>
+{% endblock %}
+
+{% block content %}
+
+<div class="details-container">
+    <div><img src="{{ user.image_url }}"></div>
+    <div>
+        <p>{{ user.get_full_name }}</p>
+        <button>Edit</button>
+        <button>Delete</button>
+    </div>
+</div>
+
+{% endblock %}

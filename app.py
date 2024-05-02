@@ -70,6 +70,11 @@ def handle_add_user():
 
     return redirect('/users')
 
+
+@app.get('/user/<int:user-id>')
+def show_user_details(user-id):
+
+    
     # behind the scene: dict = {'/users': show_all_users}
     # Server listens to request
     # Flask dispatches the request
