@@ -43,11 +43,12 @@ class UserViewTestCase(TestCase):
         db.session.add(test_user)
         db.session.commit()
 
+        self.test_user_id = test_user.id
+
         # We can hold onto our test_user's id by attaching it to self (which is
         # accessible throughout this test class). This way, we'll be able to
         # rely on this user in our tests without needing to know the numeric
         # value of their id, since it will change each time our tests are run.
-        self.user_id = test_user.id
 
     def tearDown(self):
         """Clean up any fouled transaction."""
@@ -55,8 +56,6 @@ class UserViewTestCase(TestCase):
         db.session.rollback()
 
     def test_list_users(self):
-        """ Test whether re return an html page with the test user info. """
-
         with app.test_client() as c:
             resp = c.get("/users")
             self.assertEqual(resp.status_code, 200)
@@ -65,13 +64,13 @@ class UserViewTestCase(TestCase):
             self.assertIn("test1_last", html)
 
     def test_edit_user(self):
-        """ Test whether we redirect the user to the Users page
-            after subitting changes, and whether the changes display """
-
         with app.test_client() as c:
-            user_id = str(self.user_id)
 
-            response = c.post(f'/users/{user_id}/edit', data={                  # NOTES: not submitted through browser, formdata and not json
+            # user = dbx() to get the user, which can give us the id
+
+            user_id = str(self.test_user_id)
+
+            response = c.post(f'/users/{user_id}/edit', data={
                 "first_name": 'changed1_first',
                 "last_name": 'changed1_last',
                 "img_url": 'www.google.com'
@@ -85,16 +84,9 @@ class UserViewTestCase(TestCase):
             # TODO: future test for broken image URL
 
     def test_delete_user(self):
-        """ Test whether we redirect the user to the Users page after
-            subitting changes, and whether the user is removed from page. """
-
         with app.test_client() as c:
 
-            user_id = str(self.user_id)
-            user_first_name = db.session.execute(
-                db.select(User.first_name).where(
-                    User.id == user_id
-                ))
+            user_id = str(self.test_user_id)
 
             response = c.post(f'/users/{user_id}/delete', data={
                 "user_id": 'user_id'
@@ -103,4 +95,4 @@ class UserViewTestCase(TestCase):
             self.assertEqual(response.status_code, 302)
             response = c.get("/users")
             html = response.get_data(as_text=True)
-            self.assertNotIn(f'{user_first_name}', html)
+            self.assertNotIn("changed1_first", html)

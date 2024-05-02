@@ -2,13 +2,14 @@
 
 import os
 
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import NotFound
 
 from models import db, dbx, User
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret'  # WHY DOES THIS WORK WITH FLASH???
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     "DATABASE_URL", 'postgresql:///blogly')
 app.config['SQLALCHEMY_ECHO'] = True
@@ -69,6 +70,8 @@ def handle_add_user():
     db.session.add(user)
     db.session.commit()
 
+    flash(f'User {first_name} was added!')
+
     return redirect('/users')
 
 
@@ -90,7 +93,7 @@ def edit_user_details(user_id):
     """ Given the user id, show the page for the user to edit details. """
 
     q = db.select(User).where(User.id == user_id)
-    user = dbx(q).scalars().all()[0]
+    user = dbx(q).scalars().one()
 
     return render_template(
         "user_edit.jinja",
@@ -112,6 +115,9 @@ def confirm_user_edit(user_id):
 
     db.session.commit()
 
+    # TODO: ask why this wouldn't work without a secret key
+    flash(f'User {user.first_name} was edited!')
+
     return redirect('/users')
 
 
@@ -125,5 +131,7 @@ def confirm_user_delete(user_id):
 
     db.session.delete(user)
     db.session.commit()
+
+    flash(f'User {user.first_name} was deleted!')
 
     return redirect('/users')
