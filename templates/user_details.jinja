@@ -30,5 +30,12 @@
         </form>
     </div>
 </div>
+<div class="user-posts">
+</div>
+<div class="user-posts-actions">
+    <form action="/users/{{ user.id }}/posts/new">
+        <button>Add Post</button>
+    </form>
+</div>
 
 {% endblock %}

@@ -6,7 +6,7 @@ from flask import Flask, request, redirect, render_template, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import NotFound
 
-from models import db, dbx, User
+from models import db, dbx, User, Post
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'  # NOTES: this is a flash message dependent
@@ -136,3 +136,14 @@ def handle_user_delete(user_id):
     flash(f'User {user.first_name} was deleted!')
 
     return redirect('/users')
+
+
+@app.get('/users/<int:user_id>/posts/new')
+def add_new_post(user_id):
+
+    q = db.select(User).where(User.id == user_id)
+    user = db.one_or_404(q)
+
+    return render_template(
+        'post_add.jinja',
+        user=user)
