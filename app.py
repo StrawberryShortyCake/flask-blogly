@@ -83,7 +83,7 @@ def handle_add_user():
 def show_user_details(user_id):
     """ Given a user id, show the page for the user details."""
 
-    q = db.select(User).where(User.id == user_id)
+    q = db.select(User).where(User.user_id == user_id)
     user = db.one_or_404(q)
 
     return render_template("user_details.jinja", user=user)
@@ -93,7 +93,7 @@ def show_user_details(user_id):
 def show_user_edit(user_id):
     """Given the user id, show the page for the user to edit details."""
 
-    q = db.select(User).where(User.id == user_id)
+    q = db.select(User).where(User.user_id == user_id)
     user = db.one_or_404(q)
 
     return render_template(
@@ -106,7 +106,7 @@ def show_user_edit(user_id):
 def handle_user_edit(user_id):
     """Given a user id and changes to the user details, update the database."""
 
-    q = db.select(User).where(User.id == user_id)
+    q = db.select(User).where(User.user_id == user_id)
     user = db.one_or_404(q)
 
 # TODO: why isn't this giving us our default image when a user puts an empty url
@@ -127,7 +127,7 @@ def handle_user_delete(user_id):
     Given a user id, delete the user instance from the database.
     """
 
-    q = db.select(User).where(User.id == user_id)
+    q = db.select(User).where(User.user_id == user_id)
     user = db.one_or_404(q)
 
     db.session.delete(user)
@@ -139,11 +139,27 @@ def handle_user_delete(user_id):
 
 
 @app.get('/users/<int:user_id>/posts/new')
-def add_new_post(user_id):
+def show_add_new_post(user_id):
 
-    q = db.select(User).where(User.id == user_id)
+    q = db.select(User).where(User.user_id == user_id)
     user = db.one_or_404(q)
 
     return render_template(
         'post_add.jinja',
         user=user)
+
+
+@app.post('/users/<int:user_id>/posts/new')
+def handle_add_post(user_id):
+    """Add a new post"""
+
+    q = db.select(User).where(User.user_id == user_id)
+    user = db.one_or_404(q)
+
+    title = request.form['title']
+    content = request.form['content']
+
+    user.posts.append(Post(title=title, content=content))
+    db.session.commit()
+
+    return redirect(f"/users/{user.user_id}")

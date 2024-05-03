@@ -1,15 +1,17 @@
-from models import db, dbx, User
-# DEFAULT_IMAGE_URL
-from app import app
-from unittest import TestCase
 import os
-
 os.environ["DATABASE_URL"] = "postgresql:///blogly_test"
 os.environ["FLASK_DEBUG"] = "0"
 
+from unittest import TestCase
+#TODO: at the point you import app, DATABASE_URL is set
+from app import app
+from models import db, dbx, User, Post
+
+# DEFAULT_IMAGE_URL
 
 # Make Flask errors be real errors, rather than HTML pages with error info
 app.config['TESTING'] = True
+
 
 # Create our tables (we do this here, so we only create the tables
 # once for all tests --- in each test, we'll delete the data

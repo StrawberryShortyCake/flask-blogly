@@ -12,7 +12,7 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    id = db.mapped_column(
+    user_id = db.mapped_column(
         db.Integer,
         db.Identity(),
         primary_key=True,
@@ -32,6 +32,12 @@ class User(db.Model):
         db.String(1000),
         nullable=False,
         default="https://demofree.sirv.com/nope-not-here.jpg"
+    )
+
+    posts = db.relationship(
+        "Post",
+        back_populates="user",
+        cascade="all, delete-orphan"
     )
 
     def get_full_name(self):
@@ -66,10 +72,12 @@ class Post(db.Model):
     )
 
     user_id = db.mapped_column(
-        db.String(20),
+        db.Integer,
         db.ForeignKey(
-            "users.id",
+            "users.user_id",
             ondelete="CASCADE",
-            onupdate="CASCADE"
+            onupdate="CASCADE",
         )
     )
+
+    user = db.relationship("User", back_populates="posts")
